@@ -73,7 +73,7 @@ def getMyCourses(db:Session,user_id:int):
     if not courses:
         raise HTTPException(
         status_code=404,
-        detail="Courses not found"
+        detail="Course not found"
         )
     return courses
 

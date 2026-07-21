@@ -21,31 +21,70 @@ def enrollement(db: Session, course_id:int, user_id:int):
             detail="Course not found"
         )
 
+
     if course.capacity <= 0:
         raise HTTPException(
             status_code=400,
             detail="Capacity is full"
         )
 
+
+    # check old enrollment
+    enrollment = db.query(Enrollment).filter(
+        Enrollment.course_id == course_id,
+        Enrollment.student_id == user_id
+    ).first()
+
+
+
+    # agar pehle enroll kiya hua tha aur phir unenroll kiya
+    if enrollment:
+
+        if enrollment.isDeleted == True:
+
+            enrollment.isDeleted = False
+            enrollment.updated_at = datetime.now()
+
+        else:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Already enrolled"
+            )
+
+
+    # agar kabhi enroll hi nahi kiya
+    else:
+
+        enrollment = Enrollment(
+            student_id=user_id,
+            course_id=course_id,
+            isDeleted=False,
+            created_at=datetime.now(),
+            updated_at=datetime.now()
+        )
+
+        db.add(enrollment)
+
+
+
     course.capacity -= 1
 
-    new_enrollment = Enrollment(
-        student_id=user_id,
-        course_id=course_id,
-        created_at=datetime.now(),
-        updated_at=datetime.now()
-    )
 
-    db.add(new_enrollment)
     db.commit()
-    db.refresh(new_enrollment)
+    db.refresh(enrollment)
 
-    return new_enrollment
+
+    return enrollment
 
 
 
 #Unenrollement
 def unenrollement(db: Session, course_id:int, user_id:int):
+
+    course = getSpecificCourse(db, course_id)
+
+    course.capacity += 1
 
     enrollment = db.query(Enrollment).filter(
         Enrollment.course_id == course_id,
@@ -61,6 +100,7 @@ def unenrollement(db: Session, course_id:int, user_id:int):
 
 
     enrollment.isDeleted=True
+        
 
     db.commit()
     db.refresh(enrollment)
@@ -69,12 +109,7 @@ def unenrollement(db: Session, course_id:int, user_id:int):
 
 #getMyCourse
 def getMyCourses(db:Session,user_id:int):
-    courses= db.query(Enrollment).filter(Enrollment.student_id==user_id).all()
-    if not courses:
-        raise HTTPException(
-        status_code=404,
-        detail="Course not found"
-        )
+    courses= db.query(Enrollment).filter(Enrollment.student_id==user_id,Enrollment.isDeleted == False).all()
     return courses
 
 

@@ -40,8 +40,21 @@ def getSpecificCourse(db:Session,course_id:int):
 
 
 #getAllCourses
-def getCourses(db:Session):
-    return db.query(Course).filter(Course.isDeleted == False).all()
+def getCourses(db:Session,skip:int=0,limit:int=10):
+    return db.query(Course).filter(Course.isDeleted == False).offset(skip).limit(limit).all()
+
+
+
+#Total Courses
+def getCourseCount(db):
+
+    return (
+        db.query(Course)
+        .filter(Course.isDeleted == False)
+        .count()
+    )
+
+
 
 
 #UpdateCourse

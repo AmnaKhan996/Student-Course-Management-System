@@ -1,4 +1,6 @@
 #this is routes in this we will pass requestbody to the apis as a pedantics and also a db session
+import math
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -17,6 +19,7 @@ from app.schema.course import(
 #crud operations 
 from app.service.course import(
     createCourse,
+    getCourseCount,
     getSpecificCourse,
     getCourses,
     updateCourse,
@@ -43,9 +46,33 @@ def registerCourse(course:CreateCourse,db:Session = Depends(get_db),role:str=Dep
 
 
 #getAllCourses
-@router.get("/",response_model = list[CourseResponse])
-def getAllCourses(db:Session = Depends(get_db)):
-    return getCourses(db)
+@router.get("/")
+def getAllCourses(page:int=1,limit:int=5,db:Session=Depends(get_db)):
+    
+    skip = (page-1)*limit
+    courses = getCourses(db,skip,limit)
+
+
+    total = getCourseCount(db)
+
+
+    totalPages = math.ceil(total/limit)
+
+
+    return {
+
+        "courses": courses,
+
+        "page": page,
+
+        "limit": limit,
+
+        "totalPages": totalPages,
+
+        "total": total
+
+    }
+
 
              
 

@@ -1,9 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./Pages/homepage";
-import Login from "./Auth/login";
-import Signup from "./Auth/signUp";
-import AdminDashboard from "./Admin/AdminDashboard";
-import StudentDashboard from "./Student/studentDashboard";
+import Home from "./pages/Home/homepage";
+import Login from "./pages/Auth/login";
+import Signup from "./pages/Auth/signUp";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import StudentDashboard from "./pages/Student/studentDashboard";
+import ProtectedRoute from "./components/ProtectedRoutes";
+import Unauthorized from "./components/unauthorized";
 
 function App() {
   return (
@@ -16,9 +18,11 @@ function App() {
 
         <Route path="/signup" element={<Signup />} />
 
-        <Route path="/adminDashboard" element={<AdminDashboard />} />
+        <Route path="/adminDashboard" element={<ProtectedRoute allowedRole="admin"><AdminDashboard /></ProtectedRoute>} />
         
-        <Route path="/studentDashboard" element={<StudentDashboard />} />
+        <Route path="/studentDashboard" element={<ProtectedRoute allowedRole="student"><StudentDashboard /></ProtectedRoute>} />
+
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
       </Routes>
     </BrowserRouter>

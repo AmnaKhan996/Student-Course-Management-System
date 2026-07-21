@@ -22,7 +22,7 @@ def createUser(db:Session,user:CreateUser):
         name=user.name,
         username = user.username,
         password=hash_password(user.password),
-        role = user.role,
+        role = "student",
         created_at=datetime.now(),
         updated_at=datetime.now()
 
@@ -69,10 +69,11 @@ def loginUser(db,user:LoginSchema):
         }
     )
 
-    return({
-        "access_token": token,
-        "token_type": "bearer"
-    })
+    return {
+    "access_token": token,
+    "token_type": "bearer",
+    "role": db_user.role
+    }   
 
 
 

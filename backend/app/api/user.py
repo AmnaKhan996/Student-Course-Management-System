@@ -32,8 +32,11 @@ router = APIRouter()
 #registerUser
 @router.post("/create")
 def registerUser(user:CreateUser,db:Session = Depends(get_db)):
-    createUser(db,user)
-    print("User created successfully")
+    new_user = createUser(db,user)
+    return {
+        "message": "User created successfully",
+        "user": new_user
+    }
 
 
 #loginUser

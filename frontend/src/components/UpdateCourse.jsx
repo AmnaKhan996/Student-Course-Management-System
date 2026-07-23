@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function UpdateCourse({ course, close, refresh }) {
 
     const token = localStorage.getItem("token");
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         title: "",
@@ -71,8 +73,10 @@ function UpdateCourse({ course, close, refresh }) {
         }
 
         catch (error) {
-
-            console.log(error);
+            if(error.response.status === 401) {
+                toast.error("Unauthorized. Please log in again.");
+                navigate("/login");
+            }
 
             toast.error(
                 error.response?.data?.detail || "Update Failed"
@@ -96,106 +100,85 @@ function UpdateCourse({ course, close, refresh }) {
 
                 <form onSubmit={handleSubmit}>
 
-                    <input
+                    <div className="mb-4">
+                        <label className="block text-gray-700 font-medium mb-2">
+                            Course Title
+                        </label>
 
-                        type="text"
+                        <input
+                            type="text"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleChange}
+                            placeholder="Enter course title"
+                            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            required
+                        />
+                    </div>
 
-                        name="title"
+                    <div className="mb-4">
+                        <label className="block text-gray-700 font-medium mb-2">
+                            Description
+                        </label>
 
-                        value={formData.title}
+                        <textarea
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            placeholder="Enter course description"
+                            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            rows="4"
+                            required
+                        />
+                    </div>
 
-                        onChange={handleChange}
+                    <div className="mb-4">
+                        <label className="block text-gray-700 font-medium mb-2">
+                            Duration (Weeks)
+                        </label>
 
-                        placeholder="Course Title"
+                        <input
+                            type="number"
+                            name="duration"
+                            value={formData.duration}
+                            onChange={handleChange}
+                            placeholder="Enter duration"
+                            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            required
+                        />
+                    </div>
 
-                        className="w-full border p-3 rounded-lg mb-4"
+                    <div className="mb-6">
+                        <label className="block text-gray-700 font-medium mb-2">
+                            Capacity
+                        </label>
 
-                        required
-
-                    />
-
-                    <textarea
-
-                        name="description"
-
-                        value={formData.description}
-
-                        onChange={handleChange}
-
-                        placeholder="Description"
-
-                        className="w-full border p-3 rounded-lg mb-4"
-
-                        rows="4"
-
-                        required
-
-                    />
-
-                    <input
-
-                        type="number"
-
-                        name="duration"
-
-                        value={formData.duration}
-
-                        onChange={handleChange}
-
-                        placeholder="Duration"
-
-                        className="w-full border p-3 rounded-lg mb-4"
-
-                        required
-
-                    />
-
-                    <input
-
-                        type="number"
-
-                        name="capacity"
-
-                        value={formData.capacity}
-
-                        onChange={handleChange}
-
-                        placeholder="Capacity"
-
-                        className="w-full border p-3 rounded-lg mb-6"
-
-                        required
-
-                    />
+                        <input
+                            type="number"
+                            name="capacity"
+                            value={formData.capacity}
+                            onChange={handleChange}
+                            placeholder="Enter capacity"
+                            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            required
+                        />
+                    </div>
 
                     <div className="flex justify-end gap-4">
-
                         <button
-
                             type="button"
-
                             onClick={close}
-
-                            className="bg-gray-300 px-5 py-2 rounded-lg hover:bg-gray-400"
-
+                            className="px-5 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
                         >
-
                             Cancel
-
                         </button>
 
                         <button
-
                             type="submit"
-
                             className="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700"
-
                         >
-
-                            Update
-
+                            Update Course
                         </button>
-
                     </div>
 
                 </form>

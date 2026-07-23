@@ -1,10 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function AddCourse({ close, refresh }) {
 
     const token = localStorage.getItem("token");
+        const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         title: "",
@@ -54,6 +56,10 @@ function AddCourse({ close, refresh }) {
             close();
 
         } catch (error) {
+            if(error.response.status === 401) {
+                toast.error("Unauthorized. Please log in again.");
+                navigate("/login");
+            }
 
             console.log(error);
 

@@ -65,6 +65,11 @@ function Login(){
         }
         catch(error){
 
+            if(error.response && error.response.status === 429) {
+                toast.error("Too many login attempts. Please try again later.");
+                return;
+            }
+
             toast.error(
                 error.response?.data?.detail ||
                 "Login failed"

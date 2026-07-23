@@ -2,6 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.db import engine, Base
 
+
+#Apply Rate Limiting
+from slowapi.errors import RateLimitExceeded
+from app.core.limiter import limiter, rate_limit_handler
+
+
 # Import models so SQLAlchemy registers them
 from app.model.user import User
 from app.model.enrollement import Enrollment
@@ -12,7 +18,11 @@ from app.api import course
 from app.api import enrollement
 
 Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -22,8 +32,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 
 
 app.include_router(user.router,prefix="/user",tags=["User"])

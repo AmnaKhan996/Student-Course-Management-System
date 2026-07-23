@@ -69,6 +69,10 @@ toast.success(
 
 }
 catch(error){
+    if(error.response && error.response.status === 429) {
+        toast.error("Too many signup attempts. Please try again later.");
+        return;
+    }
 
 
 console.log(error);

@@ -1,6 +1,8 @@
-#this is routes in this we will pass requestbody to the apis as a pedantics and also a db session
-from fastapi import APIRouter, Depends, HTTPException
+
+
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
+from app.core.limiter import limiter
 
 #for session management
 from app.db.db import get_db
@@ -31,7 +33,8 @@ router = APIRouter()
 
 #registerUser
 @router.post("/create")
-def registerUser(user:CreateUser,db:Session = Depends(get_db)):
+@limiter.limit("3/minute")
+def registerUser(request: Request,user:CreateUser,db:Session = Depends(get_db)):
     new_user = createUser(db,user)
     return {
         "message": "User created successfully",
@@ -41,7 +44,9 @@ def registerUser(user:CreateUser,db:Session = Depends(get_db)):
 
 #loginUser
 @router.post("/login")
-def login(user:LoginSchema, db:Session=Depends(get_db)):
+@limiter.limit("5/minute")
+def login(request:Request,user:LoginSchema, db:Session=Depends(get_db)):
+    print("Login request received",request.client)
     return loginUser(db,user)
 
 

@@ -1,14 +1,11 @@
 from datetime import datetime
-
+from app.core.logger import logger
 from fastapi import HTTPException
-
 from sqlalchemy.orm import Session
 from app.model.user import User
 from app.schema.user import CreateUser, UpdateUser,LoginSchema
 from pwdlib import PasswordHash
 from app.dependency.jwt import create_access_token
-
-
 password_hash = PasswordHash.recommended()
 
 #HashPassword
@@ -22,16 +19,14 @@ def createUser(db:Session,user:CreateUser):
         name=user.name,
         username = user.username,
         password=hash_password(user.password),
-        role = user.role,
+        role = "student",
         created_at=datetime.now(),
         updated_at=datetime.now()
 
     )
-
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-
     return new_user
 
 
@@ -48,19 +43,19 @@ def getSpecificUser(db:Session,user_id:int):
 
 #LoginUser
 def loginUser(db,user:LoginSchema):
-    # findUser
     db_user=db.query(User).filter(User.username==user.username).first()
     if not db_user:
+        logger.info(f"Login failed: User not found for username={user.username}")
         raise HTTPException(
         status_code=404,
         detail="User not found"
         )
     if not password_hash.verify(user.password, db_user.password):
+        logger.info(f"Login failed: Invalid password for username={user.username}")
         raise HTTPException(
         status_code=404,
         detail="Invalid Password"
         )
-    
     token = create_access_token(
         {
          "user_id":db_user.id,
@@ -68,11 +63,13 @@ def loginUser(db,user:LoginSchema):
          "role":db_user.role
         }
     )
-
-    return({
-        "access_token": token,
-        "token_type": "bearer"
-    })
+    print(f"Login successful for username={user.username}, id={db_user.id}, role={db_user.role}")
+    return {
+    "access_token": token,
+    "token_type": "bearer",
+    "role": db_user.role,
+    "user_id": db_user.id
+    }   
 
 
 
@@ -87,13 +84,10 @@ def updateUser(user_id:int, user:UpdateUser, db:Session):
     if db_user:
         if user.name is not None:
             db_user.name = user.name
-
         if user.username is not None:
-            db_user.username = user.username
-            
+            db_user.username = user.username  
         db.commit()
         db.refresh(db_user)
-
     return db_user
 
 
@@ -103,9 +97,7 @@ def deleteUser(user_id:int, db:Session):
     user = getSpecificUser(db,user_id)
     if user:
         user.isDeleted=True
-
         db.commit()
         db.refresh(user)
-
     return user
 

@@ -3,7 +3,6 @@ from enum import Enum
 from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 
-
 class UserRole(str, Enum):
     ADMIN="admin"
     STUDENT="student"
@@ -14,18 +13,14 @@ class CreateUser(BaseModel):
     password: str = Field(..., min_length=8)
     role: Optional[UserRole] = None
 
-
 class LoginSchema(BaseModel):
     username: EmailStr
     password: str
-
 
 class UpdateUser(BaseModel):
     name: Optional[str] = None
     username: Optional[EmailStr] = None
     role: Optional[UserRole] = None
-    isDeleted: Optional[bool] = None
-
 
 class UserResponse(BaseModel):
     id: int
@@ -35,6 +30,5 @@ class UserResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     isDeleted: bool
-
     class Config:
         from_attributes = True

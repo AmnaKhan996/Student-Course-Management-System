@@ -2,14 +2,19 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-
+import Notification from "../../components/notification";
+import Curriculum from "../Student/Curriculum";
+import LogoutButton from "../../components/LogoutButton";
 function StudentDashboard() {
 
 
     const [courses, setCourses] = useState([]);
 
     const [myCourses, setMyCourses] = useState([]);
-
+    
+    const [selectedCourseId, setSelectedCourseId] = useState(null);
+    
+    const [activeTab, setActiveTab] = useState("topics");
 
     const navigate = useNavigate();
 
@@ -69,6 +74,7 @@ function StudentDashboard() {
 
             );
 
+            console.log("MY COURSES",myCoursesResponse)
 
 
             setCourses(
@@ -213,7 +219,6 @@ function StudentDashboard() {
 
 
 return (
-
 <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-900 to-indigo-900 p-8">
 
 
@@ -221,7 +226,6 @@ return (
 
     <div className="
         bg-white/10
-        backdrop-blur-xl
         border-white/20
         rounded-2xl
         shadow-sm
@@ -257,9 +261,15 @@ return (
 
         </div>
 
+            <div className="flex gap-5 items-center">
 
 
-        <button
+            <Notification userId={localStorage.getItem("user_id")}/>
+
+
+           
+
+        {/* <button
 
             onClick={handleLogout}
 
@@ -280,7 +290,12 @@ return (
 
             Logout
 
-        </button>
+        </button> */}
+
+         <LogoutButton/>
+
+
+            </div>
 
 
     </div>
@@ -375,9 +390,27 @@ return (
 
         key={course.id}
 
+        onDoubleClick={()=>{
+            const isEnrolled= myCourses.some((item)=>{
+                return item.course.id == course.id
+            })
+
+            if(isEnrolled){
+                setSelectedCourseId(course.id)
+                navigate(`/curriculum/${course.id}`)
+            }
+            else{
+                toast.error("Please enroll first");
+            }
+
+
+
+            
+            
+        }}
+
         className="
         bg-white/10
-        backdrop-blur-xl
         border
         border-white/20
         rounded-3xl
@@ -389,6 +422,7 @@ return (
         p-6
         border
         border-gray-100
+        relative z-0
         "
 
 
@@ -454,7 +488,7 @@ return (
                 text-blue-100
                 mt-4
                 leading-relaxed
-                h-20
+                min-h-20
             ">
 
                 {course.description}
@@ -516,7 +550,7 @@ return (
                     <span className={`
                         font-semibold
                         ${
-                            course.capacity > 0
+                            course.available_capacity > 0
                             ?
                             "text-green-600"
                             :
@@ -524,7 +558,7 @@ return (
                         }
                     `}>
 
-                        {course.capacity}
+                        {course.available_capacity}
 
                     </span>
 
@@ -590,9 +624,7 @@ return (
             :
 
 
-            course.capacity > 0
-
-
+            course.available_capacity > 0
             ?
 
             (
@@ -609,6 +641,7 @@ return (
                 to-indigo-600
                 hover:from-blue-600
                 hover:to-indigo-700
+
                 shadow-lg
                 hover:shadow-blue-500/40
                 transition-all
@@ -679,6 +712,8 @@ return (
 
 
 </div>
+
+
 
 );
 

@@ -4,9 +4,10 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 import AddCourse from "../../components/AddCourse";
-import UpdateCourse from "../../components/UpdateCourse";
 import CourseTable from "../../components/CourseTable";
 import Pagination from "../../components/Pagination";
+import Notification from "../../components/notification";
+import LogoutButton from "../../components/LogoutButton";
 
 function AdminDashboard() {
 
@@ -19,8 +20,6 @@ function AdminDashboard() {
     const [totalPages, setTotalPages] = useState(1);
 
     const [showCreate, setShowCreate] = useState(false);
-
-    const [showUpdate, setShowUpdate] = useState(false);
 
     const [selectedCourse, setSelectedCourse] = useState(null);
 
@@ -148,52 +147,38 @@ function AdminDashboard() {
         <div className="flex gap-4">
 
 
-            <button
-
-                onClick={() => setShowCreate(true)}
-
-                className="
-                bg-indigo-600
-                hover:bg-indigo-700
-                text-white
-                px-6
-                py-3
-                rounded-xl
-                font-semibold
-                shadow-md
-                transition
-                "
-
-            >
-
-                + Create Course
-
-            </button>
+ 
 
 
 
+            <div className="flex gap-5 items-center">
 
-            <button
 
-                onClick={handleLogout}
+            <Notification userId={localStorage.getItem("user_id")}/>
 
-                className="
-                bg-red-500
-                hover:bg-red-600
-                text-white
-                px-6
-                py-3
-                rounded-xl
-                font-semibold
-                shadow-md
-                transition
-                "
+
+            {/* <button
+
+            onClick={handleLogout}
+
+            className="
+            bg-red-600
+            text-white
+            px-6
+            py-3
+            rounded-xl
+            "
 
             >
 
-                Logout
+            Logout
 
-            </button>
+            </button> */}
+
+            <LogoutButton/>
+
+
+            </div>
 
 
         </div>
@@ -338,6 +323,7 @@ function AdminDashboard() {
         p-8
     ">
 
+        <div  className="flex justify-between">
 
         <div className="mb-6">
 
@@ -363,6 +349,30 @@ function AdminDashboard() {
 
             </p>
 
+        </div>
+
+        <button
+
+                onClick={() => setShowCreate(true)}
+
+                className="
+                bg-indigo-600
+                hover:bg-indigo-700
+                text-white
+                px-2
+                py-2
+                rounded-xl
+                font-semibold
+                shadow-md
+                transition
+                mb-5
+                "
+
+            >
+
+                + Create Course
+
+        </button>
 
         </div>
 
@@ -378,9 +388,7 @@ function AdminDashboard() {
 
             onRowClick={(course)=>{
 
-                setSelectedCourse(course);
-
-                setShowUpdate(true);
+                navigate( `/adminDashboard/courseDashboard/${course.id}`)
 
             }}
 
@@ -453,28 +461,6 @@ function AdminDashboard() {
 
 
 
-    {/* Update Course Modal */}
-
-
-    {
-
-    showUpdate &&
-
-    (
-
-        <UpdateCourse
-
-            course={selectedCourse}
-
-            close={()=>setShowUpdate(false)}
-
-            refresh={fetchCourses}
-
-        />
-
-    )
-
-    }
 
 
 

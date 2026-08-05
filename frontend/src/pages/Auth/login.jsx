@@ -50,6 +50,15 @@ function Login(){
                 response.data.role
             );
 
+            localStorage.setItem(
+                "user_id",
+                response.data.user_id
+            );
+
+            console.log("Login successful:", response.data);
+
+
+
 
             toast.success("Login successful");
 

@@ -24,8 +24,6 @@ function ProtectedRoute({children, allowedRole}){
 
         const decoded = jwtDecode(token);
 
-        console.log("Decoded token:", decoded);
-
         const currentTime = Date.now() / 1000;
 
         // Token expired
@@ -33,6 +31,7 @@ function ProtectedRoute({children, allowedRole}){
 
             localStorage.removeItem("token");
             localStorage.removeItem("role");
+            localStorage.removeItem("user_id");
 
             toast.error("Session expired. Please login again.");
 
@@ -44,6 +43,7 @@ function ProtectedRoute({children, allowedRole}){
         // Invalid token
         localStorage.removeItem("token");
         localStorage.removeItem("role");
+        localStorage.removeItem("user_id");
 
         return <Navigate to="/login"/>;
     }

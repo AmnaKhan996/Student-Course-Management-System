@@ -55,8 +55,13 @@ function AddCourse({ close, refresh }) {
 
             close();
 
-        } catch (error) {
-            if(error.response.status === 401) {
+        } 
+        
+        catch (error) {
+
+            console.log("Backend Error:", error.response);
+            console.log("Backend Data:", error.response?.data);
+            if(error.response?.status === 401) {
                 toast.error("Unauthorized. Please log in again.");
                 navigate("/login");
             }

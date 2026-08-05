@@ -84,7 +84,18 @@ function CourseTable({ courses, deleteCourse, onRowClick }) {
                                 text-sm
                                 font-semibold
                             ">
-                                Capacity
+                                Total Capacity
+                            </th>
+
+
+                            <th className="
+                                px-6
+                                py-4
+                                text-left
+                                text-sm
+                                font-semibold
+                            ">
+                                Available Capacity
                             </th>
 
 
@@ -268,7 +279,7 @@ function CourseTable({ courses, deleteCourse, onRowClick }) {
 
 
 
-                                {/* Capacity */}
+                                {/* Total capacity */}
 
                                 <td className="
                                     px-6
@@ -287,6 +298,32 @@ function CourseTable({ courses, deleteCourse, onRowClick }) {
                                     ">
 
                                         {course.capacity}
+
+                                    </span>
+
+
+                                </td>
+
+
+                                {/* Available Capacity */}
+
+                                <td className="
+                                    px-6
+                                    py-5
+                                ">
+
+
+                                    <span className="
+                                    bg-green-100
+                                    text-green-700
+                                    px-3
+                                    py-1
+                                    rounded-full
+                                    text-sm
+                                    font-medium
+                                    ">
+
+                                        {course.available_capacity}
 
                                     </span>
 
